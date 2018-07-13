@@ -1,0 +1,25 @@
+{
+  "name": "pushilka",
+  "version": "1.0.0",
+  "description": "Web push client",
+  "main": "./dist/app.js",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp-uglify": "^3.0.0",
+    "gulp": "^3.9.1",
+    "pump": "^3.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pushilka/pushilka.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pushilka/pushilka/issues"
+  },
+  "homepage": "https://github.com/pushilka/pushilka#readme"
+}
