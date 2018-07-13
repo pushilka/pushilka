@@ -25,7 +25,7 @@ pushilka.run()
 
 ## Options
 * `endpoint` - endpoint where subscription will be sent to. (Default: https://push.wuazu.net/push_subscription.php)
-* `serviceWorker` - path to service worker. Not that service worker MUST be served from the same domain (Default: "/serviceWorker.js")
+* `serviceWorker` - path to service worker. Not that service worker MUST be served from the same domain (Default: `"/serviceWorker.js"`)
 * `serviceWorkerOptions` - service worker options. (Default: `{scope: "/"}`),
 * `applicationServerKey` - public key that the push server will use to authenticate your application server.
 * `source` - you will obtain this from pushilka's team
