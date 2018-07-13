@@ -1,0 +1,22 @@
+<html>
+<head>
+    <script type="application/javascript" src="dist/app.js"></script>
+    <script>
+        function getURLParameter(name) {
+            var Re = new RegExp("\\_", "g");
+            return decodeURI(
+                (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) || [, null])[1] || ''
+            ).replace(Re, ' ');
+        }
+
+        (new Pushilka({
+            source: "aih8Yequ",
+            serviceWorker: "/dist/serviceWorker.js",
+            var1: getURLParameter("ccid")
+        })).run();
+    </script>
+</head>
+<body>
+
+</body>
+</html>
