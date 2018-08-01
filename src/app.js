@@ -11,6 +11,10 @@ function Pushilka(options) {
         var4: "",
 
         done: function () {
+        },
+        success: function () {
+        },
+        decline: function () {
         }
     };
 
@@ -48,7 +52,7 @@ function Pushilka(options) {
                 return sendSubscriptionToServer(subscription, 'POST');
             })
             .catch(function () {
-                params.done();
+                params.decline();
             });
     }
 
@@ -73,10 +77,12 @@ function Pushilka(options) {
         })
             .then(function () {
                 params.done();
+                params.success();
                 return subscription;
             })
             .catch(function () {
                 params.done();
+                params.success();
             });
     }
 
