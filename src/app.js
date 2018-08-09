@@ -86,8 +86,16 @@ function Pushilka(options) {
             });
     }
 
+    this.ready = function (callback) {
+        if (document.readyState === 'interactive' || document.readyState === 'complete') {
+            callback();
+        } else {
+            document.addEventListener("DOMContentLoaded", callback);
+        }
+    };
+
     this.run = function () {
-        document.addEventListener("DOMContentLoaded", function () {
+        this.ready(function () {
             navigator.serviceWorker.register(params.serviceWorker, params.serviceWorkerOptions);
 
             navigator.serviceWorker.ready

@@ -16,7 +16,8 @@ self.addEventListener('push', function (event) {
             requireInteraction: false,
             timestamp: message.timestamp,
             data: {
-                url: message.url
+                url: message.url,
+                msg_id: message.hasOwnProperty("msg_id") ? message.msg_id : ""
             }
         });
     };
