@@ -41,6 +41,18 @@ location ~ /node_modules/pushilka/dist/(serviceWorker|app).js$ {
 }
 ```
 
+## Apache configuration example
+
+```
+<Location ~ "/(serviceWorker|app).js$">
+    Header set Service-Worker-Allowed /
+    Header unset ETag
+    Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+</Location>
+```
+
 ## CloudFront configuration
 
 1. Deploy [pushilka-cloudfront-headers](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:237798369076:applications~pushilka-cloudfront-headers) application. During deployment you will be asked for application name, choose any you want. For example "pushilka".
