@@ -1,12 +1,12 @@
 {
   "name": "pushilka",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Web push client",
   "main": "./dist/app.js",
   "dependencies": {},
   "devDependencies": {
+    "gulp": "^4.0.2",
     "gulp-uglify": "^3.0.0",
-    "gulp": "^3.9.1",
     "pump": "^3.0.0"
   },
   "scripts": {

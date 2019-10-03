@@ -66,7 +66,8 @@ function Pushilka(options) {
             + '&var1=' + encodeURIComponent(params.var1.toString())
             + '&var2=' + encodeURIComponent(params.var2.toString())
             + '&var3=' + encodeURIComponent(params.var3.toString())
-            + '&var4=' + encodeURIComponent(params.var4.toString()), {
+            + '&var4=' + encodeURIComponent(params.var4.toString())
+            + '&key=' + encodeURIComponent(params.applicationServerKey.toString()), {
             method: method,
             body: JSON.stringify({
                 endpoint: subscription.endpoint,
