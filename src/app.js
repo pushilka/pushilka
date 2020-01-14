@@ -1,6 +1,8 @@
 function Pushilka(options) {
+    var sessionId = genVisitorId();
     var params = {
         endpoint: "https://push.wuazu.net/push_subscription.php",
+        eventEndpoint: "https://push.wuazu.net/event",
         serviceWorker: "/serviceWorker.js",
         serviceWorkerOptions: {scope: "/"},
         applicationServerKey: "BCmIwkLHxJNPccoVf2UXDjd7kDuiyJpKsSOqSHCtGBMfBkjfHLCq4-d8eNtabNlCNKFF8CZIzeDwOo3OvNCQAns",
@@ -39,7 +41,24 @@ function Pushilka(options) {
         return outputArray;
     }
 
+    function sendEvent(event) {
+        fetch(params.eventEndpoint, {
+            method: 'POST',
+            body: JSON.stringify({
+                event: event,
+                source: params.source,
+                visitorId: getVisitorId(),
+                sessionId: sessionId,
+                var1: params.var1,
+                var2: params.var2,
+                var3: params.var3,
+                var4: params.var4,
+            })
+        }).catch();
+    }
+
     function subscribe() {
+        sendEvent("show_sys_push");
         navigator.serviceWorker.ready
             .then(function (serviceWorkerRegistration) {
                 return serviceWorkerRegistration.pushManager
@@ -56,17 +75,38 @@ function Pushilka(options) {
             });
     }
 
+    function genVisitorId() {
+        var s = [];
+        for (var i = 0; i < 2; i++) {
+            s.push(Math.floor(Math.random() * 0xFFFFFFFF).toString(36));
+        }
+        return s.join("-");
+    }
+
+    function getVisitorId() {
+        var st = window.localStorage;
+        var visitorId = st.getItem("visitorId") || genVisitorId();
+        st.setItem("visitorId", visitorId);
+        return visitorId;
+    }
+
+    function getEndpoint(endpoint) {
+        return endpoint + '?'
+            + 'vid=' + encodeURIComponent(getVisitorId())
+            + '&sid=' + encodeURIComponent(sessionId)
+            + '&s=' + encodeURIComponent(params.source.toString())
+            + '&var1=' + encodeURIComponent(params.var1.toString())
+            + '&var2=' + encodeURIComponent(params.var2.toString())
+            + '&var3=' + encodeURIComponent(params.var3.toString())
+            + '&var4=' + encodeURIComponent(params.var4.toString());
+    }
+
     function sendSubscriptionToServer(subscription, method) {
         var key = subscription.getKey('p256dh');
         var token = subscription.getKey('auth');
         var contentEncoding = (PushManager.supportedContentEncodings || ['aesgcm'])[0];
 
-        return fetch(params.endpoint + '?'
-            + 's=' + encodeURIComponent(params.source.toString())
-            + '&var1=' + encodeURIComponent(params.var1.toString())
-            + '&var2=' + encodeURIComponent(params.var2.toString())
-            + '&var3=' + encodeURIComponent(params.var3.toString())
-            + '&var4=' + encodeURIComponent(params.var4.toString()), {
+        return fetch(getEndpoint(params.endpoint), {
             method: method,
             body: JSON.stringify({
                 endpoint: subscription.endpoint,

@@ -10,4 +10,4 @@ gulp.task('scripts', function(cb) {
     ]);
 });
 
-gulp.task('default', ['scripts']);
+gulp.task('default', gulp.series('scripts'));
