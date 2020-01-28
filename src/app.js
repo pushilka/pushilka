@@ -58,9 +58,9 @@ function Pushilka(options) {
     }
 
     function subscribe() {
-        sendEvent("show_sys_push");
         navigator.serviceWorker.ready
             .then(function (serviceWorkerRegistration) {
+                sendEvent("sys_push_invoked");
                 return serviceWorkerRegistration.pushManager
                     .subscribe({
                         userVisibleOnly: true,
@@ -71,6 +71,7 @@ function Pushilka(options) {
                 return sendSubscriptionToServer(subscription, 'POST');
             })
             .catch(function () {
+                sendEvent("sys_push_blocked");
                 params.decline();
             });
     }
