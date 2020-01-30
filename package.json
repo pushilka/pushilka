@@ -1,6 +1,6 @@
 {
   "name": "pushilka",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Web push client",
   "main": "./dist/app.js",
   "dependencies": {},
