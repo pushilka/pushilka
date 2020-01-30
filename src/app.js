@@ -11,7 +11,19 @@ function Pushilka(options) {
         var2: "",
         var3: "",
         var4: "",
-
+        useDialog: false,
+        dialog: {
+            ttl: 30,
+            message: "We'd like to send you notifications for the latest news and updates.",
+            allowText: "Allow",
+            cancelText: "No thanks",
+            icon: 'https://push.wuazu.net/s/pushilka/bell.webp',
+            style: 'https://push.wuazu.net/s/pushilka/app.css',
+            template: '<div id="pushilka-dialog" class="pushilka-dialog"><div class="pushilka-icon">'
+            + '<img width="80" src="{ICON_URL}" alt=""></div><div class="pushilka-message">{MESSAGE}</div>'
+            + '<div class="pushilka-buttons"><a href="" id="pushilka-agree-button" class="pushilka-agree-button">{ALLOW_TEXT}</a>'
+            + '<a href="" id="pushilka-cancel-button" class="pushilka-cancel-button">{CANCEL_TEXT}</a></div></div>'
+        },
         done: function () {
         },
         success: function () {
@@ -21,7 +33,13 @@ function Pushilka(options) {
     };
 
     for (var i in options) {
-        if (options.hasOwnProperty(i) && params.hasOwnProperty(i)) {
+        if (options.hasOwnProperty(i) && i === 'dialog') {
+            for (var j in options[i]) {
+                if (options[i].hasOwnProperty(j) && params[i].hasOwnProperty(j)) {
+                    params[i][j] = options[i][j];
+                }
+            }
+        } else if (options.hasOwnProperty(i) && params.hasOwnProperty(i)) {
             params[i] = options[i];
         }
     }
@@ -29,7 +47,7 @@ function Pushilka(options) {
     function urlBase64ToUint8Array(base64String) {
         var padding = '='.repeat((4 - base64String.length % 4) % 4);
         var base64 = (base64String + padding)
-            .replace(/\-/g, '+')
+            .replace(/-/g, '+')
             .replace(/_/g, '/');
 
         var rawData = window.atob(base64);
@@ -52,9 +70,72 @@ function Pushilka(options) {
                 var1: params.var1,
                 var2: params.var2,
                 var3: params.var3,
-                var4: params.var4,
+                var4: params.var4
             })
         }).catch();
+    }
+
+    function setCookie(name, value, expires) {
+        var date = new Date;
+        date.setTime(date.getTime() + 60 * expires * 1000);
+        expires = "; expires=" + date.toUTCString();
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+        var parts = document.cookie.split(";"),
+            prefix = name + "=";
+        for (var i in parts) {
+            var part = parts[i].trimLeft();
+            if (part.indexOf(prefix) === 0) {
+                return part.substring(prefix.length);
+            }
+        }
+
+        return null;
+    }
+
+    function showDialog() {
+        if (getCookie("pushilka-dialog") !== null) {
+            return;
+        }
+
+        sendEvent("push_invoked");
+
+        var dialog = params.dialog;
+
+        var s = document.createElement('link');
+        s.rel = "stylesheet";
+        s.href = dialog.style;
+        document.body.appendChild(s);
+
+        var d = document.createElement('div');
+        d.innerHTML = dialog.template
+            .replace('{ICON_URL}', dialog.icon)
+            .replace('{MESSAGE}', dialog.message)
+            .replace('{ALLOW_TEXT}', dialog.allowText)
+            .replace('{CANCEL_TEXT}', dialog.cancelText);
+        document.body.appendChild(d);
+
+        var els = {
+            agreeButton: document.getElementById("pushilka-agree-button"),
+            cancelButton: document.getElementById("pushilka-cancel-button"),
+            dialog: document.getElementById("pushilka-dialog")
+        };
+
+        els.agreeButton.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            els.dialog.remove();
+            subscribe();
+        });
+        els.cancelButton.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            sendEvent("push_blocked");
+            setCookie("pushilka-dialog", "1", params.dialog.ttl);
+            els.dialog.remove();
+        });
     }
 
     function subscribe() {
@@ -73,6 +154,7 @@ function Pushilka(options) {
             .catch(function () {
                 sendEvent("sys_push_blocked");
                 params.decline();
+                params.done();
             });
     }
 
@@ -117,13 +199,13 @@ function Pushilka(options) {
             })
         })
             .then(function () {
-                params.done();
                 params.success();
+                params.done();
                 return subscription;
             })
             .catch(function () {
-                params.done();
                 params.success();
+                params.done();
             });
     }
 
@@ -137,18 +219,37 @@ function Pushilka(options) {
 
     this.run = function () {
         this.ready(function () {
-            navigator.serviceWorker.register(params.serviceWorker, params.serviceWorkerOptions);
+            if ("showNotification" in ServiceWorkerRegistration.prototype === false) {
+                console.debug("Push messaging is not supported.");
+                params.decline();
+                params.done();
+                return;
+            }
 
-            navigator.serviceWorker.ready
-                .then(function (serviceWorkerRegistration) {
-                    return serviceWorkerRegistration.pushManager.getSubscription();
+            if (Notification.permission === "denied") {
+                console.debug("User has blocked notifications.");
+                params.decline();
+                params.done();
+                return;
+            }
+
+            navigator.serviceWorker.register(params.serviceWorker, params.serviceWorkerOptions)
+                .then(function () {
+                    navigator.serviceWorker.ready
+                        .then(function (serviceWorkerRegistration) {
+                            return serviceWorkerRegistration.pushManager.getSubscription();
+                        })
+                        .then(function (subscription) {
+                            if (!subscription) {
+                                return params.useDialog ? showDialog() : subscribe();
+                            } else {
+                                return sendSubscriptionToServer(subscription, 'PUT');
+                            }
+                        });
                 })
-                .then(function (subscription) {
-                    if (!subscription) {
-                        return subscribe();
-                    } else {
-                        return sendSubscriptionToServer(subscription, 'PUT');
-                    }
+                .catch(function () {
+                    params.decline();
+                    params.done();
                 });
         });
     }
