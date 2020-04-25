@@ -1,8 +1,8 @@
 function Pushilka(options) {
     var sessionId = genVisitorId();
     var params = {
-        endpoint: "https://push.wuazu.net/push_subscription.php",
-        eventEndpoint: "https://push.wuazu.net/event",
+        endpoint: "https://swarmpush.com/push_subscription.php",
+        eventEndpoint: "https://swarmpush.com/event",
         serviceWorker: "/serviceWorker.js",
         serviceWorkerOptions: {scope: "/"},
         applicationServerKey: "BCmIwkLHxJNPccoVf2UXDjd7kDuiyJpKsSOqSHCtGBMfBkjfHLCq4-d8eNtabNlCNKFF8CZIzeDwOo3OvNCQAns",
@@ -17,8 +17,8 @@ function Pushilka(options) {
             message: "We'd like to send you notifications for the latest news and updates.",
             allowText: "Allow",
             cancelText: "No thanks",
-            icon: 'https://push.wuazu.net/s/pushilka/bell.webp',
-            style: 'https://push.wuazu.net/s/pushilka/app.css',
+            icon: 'https://swarmpush.com/s/pushilka/bell.webp',
+            style: 'https://swarmpush.com/s/pushilka/app.css',
             template: '<div id="pushilka-dialog" class="pushilka-dialog"><div class="pushilka-icon">'
             + '<img width="80" src="{ICON_URL}" alt=""></div><div class="pushilka-message">{MESSAGE}</div>'
             + '<div class="pushilka-buttons"><a href="" id="pushilka-agree-button" class="pushilka-agree-button">{ALLOW_TEXT}</a>'
