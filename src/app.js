@@ -1,5 +1,7 @@
 function Pushilka(options) {
-    var sessionId = genVisitorId();
+    var sessionId = genRandomString(),
+        visitorId;
+
     var params = {
         endpoint: "https://swarmpush.com/push_subscription.php",
         eventEndpoint: "https://swarmpush.com/event",
@@ -12,6 +14,7 @@ function Pushilka(options) {
         var3: "",
         var4: "",
         useDialog: false,
+        visitorCookie: 'pushilka_vid',
         dialog: {
             ttl: 30,
             message: "We'd like to send you notifications for the latest news and updates.",
@@ -20,9 +23,9 @@ function Pushilka(options) {
             icon: 'https://swarmpush.com/s/pushilka/bell.webp',
             style: 'https://swarmpush.com/s/pushilka/app.css',
             template: '<div id="pushilka-dialog" class="pushilka-dialog"><div class="pushilka-icon">'
-            + '<img width="80" src="{ICON_URL}" alt=""></div><div class="pushilka-message">{MESSAGE}</div>'
-            + '<div class="pushilka-buttons"><a href="" id="pushilka-agree-button" class="pushilka-agree-button">{ALLOW_TEXT}</a>'
-            + '<a href="" id="pushilka-cancel-button" class="pushilka-cancel-button">{CANCEL_TEXT}</a></div></div>'
+                + '<img width="80" src="{ICON_URL}" alt=""></div><div class="pushilka-message">{MESSAGE}</div>'
+                + '<div class="pushilka-buttons"><a href="" id="pushilka-agree-button" class="pushilka-agree-button">{ALLOW_TEXT}</a>'
+                + '<a href="" id="pushilka-cancel-button" class="pushilka-cancel-button">{CANCEL_TEXT}</a></div></div>'
         },
         done: function () {
         },
@@ -97,6 +100,7 @@ function Pushilka(options) {
 
     function showDialog() {
         if (getCookie("pushilka-dialog") !== null) {
+            sendEvent("push_blocked");
             return;
         }
 
@@ -158,7 +162,7 @@ function Pushilka(options) {
             });
     }
 
-    function genVisitorId() {
+    function genRandomString() {
         var s = [];
         for (var i = 0; i < 2; i++) {
             s.push(Math.floor(Math.random() * 0xFFFFFFFF).toString(36));
@@ -168,8 +172,10 @@ function Pushilka(options) {
 
     function getVisitorId() {
         var st = window.localStorage;
-        var visitorId = st.getItem("visitorId") || genVisitorId();
+        visitorId = visitorId || st.getItem("visitorId") || getCookie(params.visitorCookie) || genRandomString();
         st.setItem("visitorId", visitorId);
+        setCookie(params.visitorCookie, visitorId, 365);
+
         return visitorId;
     }
 
@@ -221,6 +227,7 @@ function Pushilka(options) {
         this.ready(function () {
             if ("showNotification" in ServiceWorkerRegistration.prototype === false) {
                 console.debug("Push messaging is not supported.");
+                sendEvent("push_not_supported");
                 params.decline();
                 params.done();
                 return;
@@ -228,6 +235,7 @@ function Pushilka(options) {
 
             if (Notification.permission === "denied") {
                 console.debug("User has blocked notifications.");
+                sendEvent("sys_push_blocked");
                 params.decline();
                 params.done();
                 return;
@@ -248,6 +256,7 @@ function Pushilka(options) {
                         });
                 })
                 .catch(function () {
+                    sendEvent("sys_push_subscribe_error");
                     params.decline();
                     params.done();
                 });
