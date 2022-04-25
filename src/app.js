@@ -24,8 +24,8 @@ function Pushilka(options) {
             style: 'https://swarmpush.com/s/pushilka/app.css',
             template: '<div id="pushilka-dialog" class="pushilka-dialog"><div class="pushilka-icon">'
                 + '<img width="80" src="{ICON_URL}" alt=""></div><div class="pushilka-message">{MESSAGE}</div>'
-                + '<div class="pushilka-buttons"><a href="" id="pushilka-agree-button" class="pushilka-agree-button">{ALLOW_TEXT}</a>'
-                + '<a href="" id="pushilka-cancel-button" class="pushilka-cancel-button">{CANCEL_TEXT}</a></div></div>'
+                + '<div class="pushilka-buttons"><a style="cursor: pointer" id="pushilka-agree-button" class="pushilka-agree-button">{ALLOW_TEXT}</a>'
+                + '<a style="cursor: pointer" id="pushilka-cancel-button" class="pushilka-cancel-button">{CANCEL_TEXT}</a></div></div>'
         },
         done: function () {
         },
