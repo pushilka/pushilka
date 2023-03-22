@@ -179,6 +179,17 @@ function Pushilka(options) {
         return visitorId;
     }
 
+    function getTimezone() {
+        let timezone = "";
+        try {
+            timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        } catch (error) {
+            console.error(error);
+        }
+
+        return timezone;
+    }
+
     function getEndpoint(endpoint) {
         return endpoint + '?'
             + 'vid=' + encodeURIComponent(getVisitorId())
@@ -187,7 +198,8 @@ function Pushilka(options) {
             + '&var1=' + encodeURIComponent(params.var1.toString())
             + '&var2=' + encodeURIComponent(params.var2.toString())
             + '&var3=' + encodeURIComponent(params.var3.toString())
-            + '&var4=' + encodeURIComponent(params.var4.toString());
+            + '&var4=' + encodeURIComponent(params.var4.toString())
+            + '&timezone=' + encodeURIComponent(getTimezone());
     }
 
     function sendSubscriptionToServer(subscription, method) {
