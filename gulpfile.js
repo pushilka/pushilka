@@ -1,29 +1,22 @@
-var gulp = require('gulp'),
-    uglify = require('gulp-uglify'),
-    uglifycss = require('gulp-uglifycss'),
-    pump = require('pump');
+const {series, src, dest} = require('gulp');
+const uglify = require('gulp-uglify');
+const uglifycss = require('gulp-uglifycss');
 
-gulp.task('scripts', function(cb) {
-    return pump([
-        gulp.src('src/*.js'),
-        uglify(),
-        gulp.dest('dist/')
-    ]);
-});
+function scripts() {
+    return src('src/*.js')
+        .pipe(uglify())
+        .pipe(dest('dist/'));
+}
 
-gulp.task('css', function(cb) {
-    return pump([
-        gulp.src('src/*.css'),
-        uglifycss(),
-        gulp.dest('dist/')
-    ]);
-});
+function css() {
+    return src('src/*.css')
+        .pipe(uglifycss())
+        .pipe(dest('dist/'))
+}
 
-gulp.task('images', function(cb) {
-    return pump([
-        gulp.src('src/*.{webp,jpg,png,gif}'),
-        gulp.dest('dist/')
-    ]);
-});
+function images() {
+    return src('src/*.{webp,jpg,png,gif}')
+        .pipe(dest('dist/'));
+}
 
-gulp.task('default', gulp.series('scripts', 'css', 'images'));
+exports.default = series(scripts, css, images)

@@ -13,6 +13,12 @@ function Pushilka(options) {
         var2: "",
         var3: "",
         var4: "",
+        var5: "",
+        var6: "",
+        var7: "",
+        var8: "",
+        var9: "",
+        var10: "",
         useDialog: false,
         visitorCookie: 'pushilka_vid',
         dialog: {
@@ -73,7 +79,13 @@ function Pushilka(options) {
                 var1: params.var1,
                 var2: params.var2,
                 var3: params.var3,
-                var4: params.var4
+                var4: params.var4,
+                var5: params.var5,
+                var6: params.var6,
+                var7: params.var7,
+                var8: params.var8,
+                var9: params.var9,
+                var10: params.var10,
             })
         }).catch();
     }
@@ -199,6 +211,12 @@ function Pushilka(options) {
             + '&var2=' + encodeURIComponent(params.var2.toString())
             + '&var3=' + encodeURIComponent(params.var3.toString())
             + '&var4=' + encodeURIComponent(params.var4.toString())
+            + '&var5=' + encodeURIComponent(params.var5.toString())
+            + '&var6=' + encodeURIComponent(params.var6.toString())
+            + '&var7=' + encodeURIComponent(params.var7.toString())
+            + '&var8=' + encodeURIComponent(params.var8.toString())
+            + '&var9=' + encodeURIComponent(params.var9.toString())
+            + '&var10=' + encodeURIComponent(params.var10.toString())
             + '&timezone=' + encodeURIComponent(getTimezone());
     }
 
