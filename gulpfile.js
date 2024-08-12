@@ -1,22 +1,22 @@
-const {series, src, dest} = require('gulp');
-const uglify = require('gulp-uglify');
-const uglifycss = require('gulp-uglifycss');
+let gulp = require('gulp');
+let uglify = require('gulp-uglify');
+let uglifycss = require('gulp-uglifycss');
 
 function scripts() {
-    return src('src/*.js')
+    return gulp.src('src/*.js')
         .pipe(uglify())
-        .pipe(dest('dist/'));
+        .pipe(gulp.dest('dist/'));
 }
 
 function css() {
-    return src('src/*.css')
+    return gulp.src('src/*.css')
         .pipe(uglifycss())
-        .pipe(dest('dist/'))
+        .pipe(gulp.dest('dist/'))
 }
 
 function images() {
-    return src('src/*.{webp,jpg,png,gif}')
-        .pipe(dest('dist/'));
+    return gulp.src('src/*.{webp,jpg,png,gif}')
+        .pipe(gulp.dest('dist/'));
 }
 
-exports.default = series(scripts, css, images)
+exports.default = gulp.series(scripts, css, images)

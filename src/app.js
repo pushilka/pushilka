@@ -1,107 +1,111 @@
-function Pushilka(options) {
-    var sessionId = genRandomString(),
-        visitorId;
+export default class Pushilka {
+    sessionId = null;
+    visitorId = null;
+    params = null;
 
-    var params = {
-        endpoint: "https://swarmpush.com/push_subscription.php",
-        eventEndpoint: "https://swarmpush.com/event",
-        serviceWorker: "/serviceWorker.js",
-        serviceWorkerOptions: {scope: "/"},
-        applicationServerKey: "BCmIwkLHxJNPccoVf2UXDjd7kDuiyJpKsSOqSHCtGBMfBkjfHLCq4-d8eNtabNlCNKFF8CZIzeDwOo3OvNCQAns",
-        source: "",
-        var1: "",
-        var2: "",
-        var3: "",
-        var4: "",
-        var5: "",
-        var6: "",
-        var7: "",
-        var8: "",
-        var9: "",
-        var10: "",
-        useDialog: false,
-        visitorCookie: 'pushilka_vid',
-        dialog: {
-            ttl: 30,
-            message: "We'd like to send you notifications for the latest news and updates.",
-            allowText: "Allow",
-            cancelText: "No thanks",
-            icon: 'https://swarmpush.com/s/pushilka/bell.webp',
-            style: 'https://swarmpush.com/s/pushilka/app.css',
-            template: '<div id="pushilka-dialog" class="pushilka-dialog"><div class="pushilka-icon">'
-                + '<img width="80" src="{ICON_URL}" alt=""></div><div class="pushilka-message">{MESSAGE}</div>'
-                + '<div class="pushilka-buttons"><a href="" id="pushilka-agree-button" class="pushilka-agree-button">{ALLOW_TEXT}</a>'
-                + '<a href="" id="pushilka-cancel-button" class="pushilka-cancel-button">{CANCEL_TEXT}</a></div></div>'
-        },
-        done: function () {
-        },
-        success: function () {
-        },
-        decline: function () {
-        }
-    };
-
-    for (var i in options) {
-        if (options.hasOwnProperty(i) && i === 'dialog') {
-            for (var j in options[i]) {
-                if (options[i].hasOwnProperty(j) && params[i].hasOwnProperty(j)) {
-                    params[i][j] = options[i][j];
-                }
+    constructor(options) {
+        this.sessionId = this.genRandomString();
+        this.params = {
+            endpoint: "https://swarmpush.com/push_subscription.php",
+            eventEndpoint: "https://swarmpush.com/event",
+            serviceWorker: "/serviceWorker.js",
+            serviceWorkerOptions: {scope: "/"},
+            applicationServerKey: "BCmIwkLHxJNPccoVf2UXDjd7kDuiyJpKsSOqSHCtGBMfBkjfHLCq4-d8eNtabNlCNKFF8CZIzeDwOo3OvNCQAns",
+            source: "",
+            var1: "",
+            var2: "",
+            var3: "",
+            var4: "",
+            var5: "",
+            var6: "",
+            var7: "",
+            var8: "",
+            var9: "",
+            var10: "",
+            useDialog: false,
+            visitorCookie: 'pushilka_vid',
+            dialog: {
+                ttl: 30,
+                message: "We'd like to send you notifications for the latest news and updates.",
+                allowText: "Allow",
+                cancelText: "No thanks",
+                icon: 'https://swarmpush.com/s/pushilka/bell.webp',
+                style: 'https://swarmpush.com/s/pushilka/app.css',
+                template: '<div id="pushilka-dialog" class="pushilka-dialog"><div class="pushilka-icon">'
+                    + '<img width="80" src="{ICON_URL}" alt=""></div><div class="pushilka-message">{MESSAGE}</div>'
+                    + '<div class="pushilka-buttons"><a href="" id="pushilka-agree-button" class="pushilka-agree-button">{ALLOW_TEXT}</a>'
+                    + '<a href="" id="pushilka-cancel-button" class="pushilka-cancel-button">{CANCEL_TEXT}</a></div></div>'
+            },
+            done: function () {
+            },
+            success: function () {
+            },
+            decline: function () {
             }
-        } else if (options.hasOwnProperty(i) && params.hasOwnProperty(i)) {
-            params[i] = options[i];
+        };
+
+        for (let i in options) {
+            if (options.hasOwnProperty(i) && i === 'dialog') {
+                for (let j in options[i]) {
+                    if (options[i].hasOwnProperty(j) && this.params[i].hasOwnProperty(j)) {
+                        this.params[i][j] = options[i][j];
+                    }
+                }
+            } else if (options.hasOwnProperty(i) && this.params.hasOwnProperty(i)) {
+                this.params[i] = options[i];
+            }
         }
     }
 
-    function urlBase64ToUint8Array(base64String) {
-        var padding = '='.repeat((4 - base64String.length % 4) % 4);
-        var base64 = (base64String + padding)
+    urlBase64ToUint8Array(base64String) {
+        let padding = '='.repeat((4 - base64String.length % 4) % 4);
+        let base64 = (base64String + padding)
             .replace(/-/g, '+')
             .replace(/_/g, '/');
 
-        var rawData = window.atob(base64);
-        var outputArray = new Uint8Array(rawData.length);
+        let rawData = window.atob(base64);
+        let outputArray = new Uint8Array(rawData.length);
 
-        for (var i = 0; i < rawData.length; ++i) {
+        for (let i = 0; i < rawData.length; ++i) {
             outputArray[i] = rawData.charCodeAt(i);
         }
         return outputArray;
     }
 
-    function sendEvent(event) {
-        fetch(params.eventEndpoint, {
+    sendEvent(event) {
+        fetch(this.params.eventEndpoint, {
             method: 'POST',
             body: JSON.stringify({
                 event: event,
-                source: params.source,
-                visitorId: getVisitorId(),
-                sessionId: sessionId,
-                var1: params.var1,
-                var2: params.var2,
-                var3: params.var3,
-                var4: params.var4,
-                var5: params.var5,
-                var6: params.var6,
-                var7: params.var7,
-                var8: params.var8,
-                var9: params.var9,
-                var10: params.var10,
+                source: this.params.source,
+                visitorId: this.getVisitorId(),
+                sessionId: this.sessionId,
+                var1: this.params.var1,
+                var2: this.params.var2,
+                var3: this.params.var3,
+                var4: this.params.var4,
+                var5: this.params.var5,
+                var6: this.params.var6,
+                var7: this.params.var7,
+                var8: this.params.var8,
+                var9: this.params.var9,
+                var10: this.params.var10,
             })
         }).catch();
     }
 
-    function setCookie(name, value, expires) {
-        var date = new Date;
+    setCookie(name, value, expires) {
+        let date = new Date;
         date.setTime(date.getTime() + 60 * expires * 1000);
         expires = "; expires=" + date.toUTCString();
         document.cookie = name + "=" + (value || "") + expires + "; path=/";
     }
 
-    function getCookie(name) {
-        var parts = document.cookie.split(";"),
+    getCookie(name) {
+        let parts = document.cookie.split(";"),
             prefix = name + "=";
-        for (var i in parts) {
-            var part = parts[i].trimLeft();
+        for (let i in parts) {
+            let part = parts[i].trimStart();
             if (part.indexOf(prefix) === 0) {
                 return part.substring(prefix.length);
             }
@@ -110,22 +114,24 @@ function Pushilka(options) {
         return null;
     }
 
-    function showDialog() {
-        if (getCookie("pushilka-dialog") !== null) {
-            sendEvent("push_blocked");
+    showDialog() {
+        let self = this;
+
+        if (this.getCookie("pushilka-dialog") !== null) {
+            this.sendEvent("push_blocked");
             return;
         }
 
-        sendEvent("push_invoked");
+        this.sendEvent("push_invoked");
 
-        var dialog = params.dialog;
+        let dialog = this.params.dialog;
 
-        var s = document.createElement('link');
+        let s = document.createElement('link');
         s.rel = "stylesheet";
         s.href = dialog.style;
         document.body.appendChild(s);
 
-        var d = document.createElement('div');
+        let d = document.createElement('div');
         d.innerHTML = dialog.template
             .replace('{ICON_URL}', dialog.icon)
             .replace('{MESSAGE}', dialog.message)
@@ -133,7 +139,7 @@ function Pushilka(options) {
             .replace('{CANCEL_TEXT}', dialog.cancelText);
         document.body.appendChild(d);
 
-        var els = {
+        let els = {
             agreeButton: document.getElementById("pushilka-agree-button"),
             cancelButton: document.getElementById("pushilka-cancel-button"),
             dialog: document.getElementById("pushilka-dialog")
@@ -143,55 +149,56 @@ function Pushilka(options) {
             e.preventDefault();
 
             els.dialog.remove();
-            subscribe();
+            self.subscribe();
         });
         els.cancelButton.addEventListener("click", function (e) {
             e.preventDefault();
 
-            sendEvent("push_blocked");
-            setCookie("pushilka-dialog", "1", params.dialog.ttl);
+            self.sendEvent("push_blocked");
+            self.setCookie("pushilka-dialog", "1", self.params.dialog.ttl);
             els.dialog.remove();
         });
     }
 
-    function subscribe() {
+    subscribe() {
+        let self = this;
         navigator.serviceWorker.ready
             .then(function (serviceWorkerRegistration) {
-                sendEvent("sys_push_invoked");
+                self.sendEvent("sys_push_invoked");
                 return serviceWorkerRegistration.pushManager
                     .subscribe({
                         userVisibleOnly: true,
-                        applicationServerKey: urlBase64ToUint8Array(params.applicationServerKey)
+                        applicationServerKey: self.urlBase64ToUint8Array(self.params.applicationServerKey)
                     });
             })
             .then(function (subscription) {
-                return sendSubscriptionToServer(subscription, 'POST');
+                return self.sendSubscriptionToServer(subscription, 'POST');
             })
             .catch(function () {
-                sendEvent("sys_push_blocked");
-                params.decline();
-                params.done();
+                self.sendEvent("sys_push_blocked");
+                self.params.decline();
+                self.params.done();
             });
     }
 
-    function genRandomString() {
-        var s = [];
-        for (var i = 0; i < 2; i++) {
+    genRandomString() {
+        let s = [];
+        for (let i = 0; i < 2; i++) {
             s.push(Math.floor(Math.random() * 0xFFFFFFFF).toString(36));
         }
         return s.join("-");
     }
 
-    function getVisitorId() {
-        var st = window.localStorage;
-        visitorId = visitorId || st.getItem("visitorId") || getCookie(params.visitorCookie) || genRandomString();
-        st.setItem("visitorId", visitorId);
-        setCookie(params.visitorCookie, visitorId, 365);
+    getVisitorId() {
+        let st = window.localStorage;
+        this.visitorId = this.visitorId || st.getItem("visitorId") || this.getCookie(this.params.visitorCookie) || this.genRandomString();
+        st.setItem("visitorId", this.visitorId);
+        this.setCookie(this.params.visitorCookie, this.visitorId, 365);
 
-        return visitorId;
+        return this.visitorId;
     }
 
-    function getTimezone() {
+    getTimezone() {
         let timezone = "";
         try {
             timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -202,30 +209,31 @@ function Pushilka(options) {
         return timezone;
     }
 
-    function getEndpoint(endpoint) {
+    getEndpoint(endpoint) {
         return endpoint + '?'
-            + 'vid=' + encodeURIComponent(getVisitorId())
-            + '&sid=' + encodeURIComponent(sessionId)
-            + '&s=' + encodeURIComponent(params.source.toString())
-            + '&var1=' + encodeURIComponent(params.var1.toString())
-            + '&var2=' + encodeURIComponent(params.var2.toString())
-            + '&var3=' + encodeURIComponent(params.var3.toString())
-            + '&var4=' + encodeURIComponent(params.var4.toString())
-            + '&var5=' + encodeURIComponent(params.var5.toString())
-            + '&var6=' + encodeURIComponent(params.var6.toString())
-            + '&var7=' + encodeURIComponent(params.var7.toString())
-            + '&var8=' + encodeURIComponent(params.var8.toString())
-            + '&var9=' + encodeURIComponent(params.var9.toString())
-            + '&var10=' + encodeURIComponent(params.var10.toString())
-            + '&timezone=' + encodeURIComponent(getTimezone());
+            + 'vid=' + encodeURIComponent(this.getVisitorId())
+            + '&sid=' + encodeURIComponent(this.sessionId)
+            + '&s=' + encodeURIComponent(this.params.source.toString())
+            + '&var1=' + encodeURIComponent(this.params.var1.toString())
+            + '&var2=' + encodeURIComponent(this.params.var2.toString())
+            + '&var3=' + encodeURIComponent(this.params.var3.toString())
+            + '&var4=' + encodeURIComponent(this.params.var4.toString())
+            + '&var5=' + encodeURIComponent(this.params.var5.toString())
+            + '&var6=' + encodeURIComponent(this.params.var6.toString())
+            + '&var7=' + encodeURIComponent(this.params.var7.toString())
+            + '&var8=' + encodeURIComponent(this.params.var8.toString())
+            + '&var9=' + encodeURIComponent(this.params.var9.toString())
+            + '&var10=' + encodeURIComponent(this.params.var10.toString())
+            + '&timezone=' + encodeURIComponent(this.getTimezone());
     }
 
-    function sendSubscriptionToServer(subscription, method) {
-        var key = subscription.getKey('p256dh');
-        var token = subscription.getKey('auth');
-        var contentEncoding = (PushManager.supportedContentEncodings || ['aesgcm'])[0];
+    sendSubscriptionToServer(subscription, method) {
+        let self = this;
+        let key = subscription.getKey('p256dh');
+        let token = subscription.getKey('auth');
+        let contentEncoding = (PushManager.supportedContentEncodings || ['aesgcm'])[0];
 
-        return fetch(getEndpoint(params.endpoint), {
+        return fetch(self.getEndpoint(self.params.endpoint), {
             method: method,
             body: JSON.stringify({
                 endpoint: subscription.endpoint,
@@ -235,43 +243,44 @@ function Pushilka(options) {
             })
         })
             .then(function () {
-                params.success();
-                params.done();
+                self.params.success();
+                self.params.done();
                 return subscription;
             })
             .catch(function () {
-                params.success();
-                params.done();
+                self.params.success();
+                self.params.done();
             });
     }
 
-    this.ready = function (callback) {
+    ready(callback) {
         if (document.readyState === 'interactive' || document.readyState === 'complete') {
             callback();
         } else {
             document.addEventListener("DOMContentLoaded", callback);
         }
-    };
+    }
 
-    this.run = function () {
-        this.ready(function () {
-            if ("showNotification" in ServiceWorkerRegistration.prototype === false) {
+    run() {
+        let self = this;
+        self.ready(function () {
+            if (!("showNotification" in ServiceWorkerRegistration.prototype)) {
                 console.debug("Push messaging is not supported.");
-                sendEvent("push_not_supported");
-                params.decline();
-                params.done();
+                self.sendEvent("push_not_supported");
+                self.params.decline();
+                self.params.done();
                 return;
             }
 
             if (Notification.permission === "denied") {
                 console.debug("User has blocked notifications.");
-                sendEvent("sys_push_blocked");
-                params.decline();
-                params.done();
+                self.sendEvent("sys_push_blocked");
+                self.params.decline();
+                self.params.done();
                 return;
             }
 
-            navigator.serviceWorker.register(params.serviceWorker, params.serviceWorkerOptions)
+            navigator.serviceWorker.register(self.params.serviceWorker, self.params.serviceWorkerOptions)
                 .then(function () {
                     navigator.serviceWorker.ready
                         .then(function (serviceWorkerRegistration) {
@@ -279,16 +288,16 @@ function Pushilka(options) {
                         })
                         .then(function (subscription) {
                             if (!subscription) {
-                                return params.useDialog ? showDialog() : subscribe();
+                                return self.params.useDialog ? self.showDialog() : self.subscribe();
                             } else {
-                                return sendSubscriptionToServer(subscription, 'PUT');
+                                return self.sendSubscriptionToServer(subscription, 'PUT');
                             }
                         });
                 })
                 .catch(function () {
-                    sendEvent("sys_push_subscribe_error");
-                    params.decline();
-                    params.done();
+                    self.sendEvent("sys_push_subscribe_error");
+                    self.params.decline();
+                    self.params.done();
                 });
         });
     }
