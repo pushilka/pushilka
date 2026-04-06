@@ -22,6 +22,7 @@ export default class Pushilka {
             var8: "",
             var9: "",
             var10: "",
+            externalId: "",
             useDialog: false,
             visitorCookie: 'pushilka_vid',
             dialog: {
@@ -90,6 +91,7 @@ export default class Pushilka {
                 var8: this.params.var8,
                 var9: this.params.var9,
                 var10: this.params.var10,
+                externalId: this.params.externalId,
             })
         }).catch();
     }
@@ -224,6 +226,7 @@ export default class Pushilka {
             + '&var8=' + encodeURIComponent(this.params.var8.toString())
             + '&var9=' + encodeURIComponent(this.params.var9.toString())
             + '&var10=' + encodeURIComponent(this.params.var10.toString())
+            + '&externalId=' + encodeURIComponent(this.params.externalId.toString())
             + '&timezone=' + encodeURIComponent(this.getTimezone());
     }
 
