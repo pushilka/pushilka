@@ -242,7 +242,8 @@ export default class Pushilka {
                 endpoint: subscription.endpoint,
                 publicKey: key ? btoa(String.fromCharCode.apply(null, new Uint8Array(key))) : null,
                 authToken: token ? btoa(String.fromCharCode.apply(null, new Uint8Array(token))) : null,
-                contentEncoding: contentEncoding
+                contentEncoding: contentEncoding,
+                applicationServerKey: self.params.applicationServerKey
             })
         })
             .then(function () {
