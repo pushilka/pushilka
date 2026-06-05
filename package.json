@@ -1,6 +1,6 @@
 {
   "name": "pushilka",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Web push client",
   "main": "./dist/app.js",
   "module": "./dist/app.esm.js",
