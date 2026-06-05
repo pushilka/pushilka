@@ -1,9 +1,30 @@
-let gulp = require('gulp');
-let uglify = require('gulp-uglify');
-let uglifycss = require('gulp-uglifycss');
+const gulp = require('gulp');
+const uglify = require('gulp-uglify');
+const uglifycss = require('gulp-uglifycss');
+const { rollup } = require('rollup');
+const terser = require('@rollup/plugin-terser');
 
-function scripts() {
-    return gulp.src('src/*.js')
+async function appBundles() {
+    const bundle = await rollup({
+        input: 'src/app.js',
+        plugins: [terser()],
+    });
+    await Promise.all([
+        bundle.write({
+            file: 'dist/app.js',
+            format: 'iife',
+            name: 'Pushilka',
+        }),
+        bundle.write({
+            file: 'dist/app.esm.js',
+            format: 'es',
+        }),
+    ]);
+    await bundle.close();
+}
+
+function otherScripts() {
+    return gulp.src(['src/*.js', '!src/app.js'])
         .pipe(uglify())
         .pipe(gulp.dest('dist/'));
 }
@@ -11,7 +32,7 @@ function scripts() {
 function css() {
     return gulp.src('src/*.css')
         .pipe(uglifycss())
-        .pipe(gulp.dest('dist/'))
+        .pipe(gulp.dest('dist/'));
 }
 
 function images() {
@@ -19,4 +40,4 @@ function images() {
         .pipe(gulp.dest('dist/'));
 }
 
-exports.default = gulp.series(scripts, css, images)
+exports.default = gulp.series(appBundles, otherScripts, css, images);
